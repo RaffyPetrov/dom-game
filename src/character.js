@@ -1,35 +1,54 @@
 /* globals e, game */
 
-console.log("character.js loaded");
 
 window.game = window.game || {};
 
-Object.assign(window.game, (function() {
+Object.assign(window.game, (function () {
     const templates = {
         player: {
             name: 'Peter',
-            img: '/assets/player.png',
+            img: 'player.png',
             hp: 100,
-            dmg: 25
+            dmg: 25,
+            defense: 10,
+            attackRating: 3
         },
         rat: {
             name: 'Giant Rat',
+            level: 1,
             ai: true,
-            img: '/assets/rat.png',
+            img: 'rat.png',
             hp: 30,
-            dmg: 10
+            dmg: 10,
+            defense: 5,
+            attackRating: 3
         },
         skeleton: {
             name: 'Skeleton',
+            level: 2,
             ai: true,
-            img: '/assets/skeleton.png',
+            img: 'skeleton.png',
             hp: 50,
-            dmg: 15
+            dmg: 15,
+            defense: 8,
+            attackRating: 5
+        },
+        goblin: {
+            name: 'Goblin',
+            level: 4,
+            ai: true,
+            img: 'goblin.png',
+            hp: 100,
+            dmg: 25,
+            defense: 12,
+            attackRating: 8
         }
     };
 
-    console.log("createCharacter registered");
-    return { createCharacter };
+    return {
+        templates,
+        createCharacter,
+    };
 
 
 
@@ -42,11 +61,21 @@ Object.assign(window.game, (function() {
         character.maxHp = character.hp;
 
         const element = createCharacterCard(character);
-        return { character, element };
+
+        return { 
+            character, 
+            element 
+        };
 
         function attack(target) {
-            console.log(`${character.name} attacks ${target.name} for ${character.dmg}`);
-            target.takeDamage(character.dmg);
+            console.log(`${character.name} attacks ${target.name}`);
+            const chance = Math.min(character.attackRating / target.defense, 1);
+            
+            if (chance >= Math.random()) {
+                target.takeDamage(character.dmg);
+            } else {
+                console.log('Attack misses!');
+            }
         }
 
         function takeDamage(incomingDmg) {
@@ -65,7 +94,7 @@ Object.assign(window.game, (function() {
         };
 
         const element = e('article', { className: 'character-card' },
-            e('div', { className: 'portrait' }, e('img', { src: '../assets' + character.img })),
+            e('div', { className: 'portrait' }, e('img', { src: '/assets/' + character.img })),
             e('div', { className: 'description' },
                 e('h3', {}, character.name),
                 e('ul', { className: 'stats' },

@@ -1,12 +1,36 @@
 /* globals e, game */
 
-window.game = window.game || {};
-
-
 Object.assign(window.game, (function () {
     return {
-        encounterController
+        encounterController,
+        generateEncounter,
     };
+
+    function generateEncounter(difficulty) {
+        let options = Object.entries(game.templates).filter(([k, v]) => v.ai); 
+        const selected = [];
+
+        let encounterLevel = 0;
+
+        while(encounterLevel < difficulty && options.length > 0) {
+            const minLevel = Math.floor(difficulty / 3);
+            const maxLevel = difficulty - encounterLevel;
+            options = options.filter(([k, v]) => v.level <= maxLevel && v.level >= minLevel);
+
+
+            if (options.length > 0 ) {
+                const index = Math.floor(Math.random() * options.length);
+
+                console.log(index);
+
+                const current = options[index];
+                encounterLevel += current[1].level;
+                selected.push(game.createCharacter(current[0]))
+            }
+        }
+
+        return selected;
+    }
 
     function encounterController(enemySlot, player) {
         let characters = [];
@@ -56,14 +80,14 @@ Object.assign(window.game, (function () {
             characters.forEach(e => e.element.classList.remove('targettable'));
         }
 
-        
+
         function nextTurn() {
             if (player.character.alive == false) {
                 game.events.onEncounterEnd(false);
             } else if (characters.filter(c => c.character.alive).length == 1) {
                 game.events.onEncounterEnd(true);
-                
-            }   
+
+            }
 
             do {
                 initiative = (initiative + 1) % characters.length;
@@ -75,6 +99,9 @@ Object.assign(window.game, (function () {
         }
 
         function enter(enemies) {
+            enemySlot.innerHTML = '';
+            enemies.forEach(e => enemySlot.appendChild(e.element));
+
             characters = [player, ...enemies];
             initiative = -1;
 
