@@ -1,5 +1,8 @@
 /* globals e, game */
 
+console.log("Before anything, game =", window.game);
+console.log("Does createCharacter exist?", typeof window.game?.createCharacter);
+
 
 Object.assign(window.game, (function () {
     const playerSlot = document.getElementById('player');
@@ -24,6 +27,14 @@ Object.assign(window.game, (function () {
     enemies.forEach(e => enemySlot.appendChild(e.element));
 
     game.events.onBeginTurn.subscribe(onBeginTurn);
+    game.events.onEncounterEnd.subscribe((victory) => {
+        if (victory) {
+            alert('Enemies defeated!');
+        } else {
+            alert('You died!');
+            disableControls();
+        }
+    });
 
     // Begin encounter as player
     encounterController.enter(enemies);
@@ -32,7 +43,8 @@ Object.assign(window.game, (function () {
         if (controller.character.ai) {
             console.log('AI controlled');
             disableControls();
-            
+            encounterController.onEnemyAttack();
+            encounterController.selectTarget({ target: player.element });
         } else {
             console.log('Player turn');
             enableControls();

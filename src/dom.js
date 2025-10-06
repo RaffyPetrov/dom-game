@@ -1,3 +1,6 @@
+window.game = window.game || {};
+
+
 function e(type, attributes = {}, ...content) {
     const result = document.createElement(type);
 
