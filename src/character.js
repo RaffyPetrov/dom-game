@@ -1,7 +1,6 @@
 /* globals e, game */
 
 
-window.game = window.game || {};
 
 Object.assign(window.game, (function () {
     const templates = {
@@ -11,7 +10,7 @@ Object.assign(window.game, (function () {
             hp: 100,
             dmg: 25,
             defense: 10,
-            attackRating: 3
+            attackRating: 10
         },
         rat: {
             name: 'Giant Rat',
